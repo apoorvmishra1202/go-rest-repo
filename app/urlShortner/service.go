@@ -15,15 +15,6 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func generateShortCode() string {
-	letters := []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	b := make([]rune, 6)
-	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(b)
-}
-
 func SetShortURL(original string) string {
 	storeMu.Lock()
 	defer storeMu.Unlock()
@@ -33,12 +24,12 @@ func SetShortURL(original string) string {
 			return k
 		}
 	}
-	short := generateShortCode()
+	short := GenerateShortCode(6)
 	for {
 		if _, exists := urlStore[short]; !exists {
 			break
 		}
-		short = generateShortCode()
+		short = GenerateShortCode(6)
 	}
 	urlStore[short] = original
 	return short
